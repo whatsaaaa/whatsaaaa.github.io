@@ -1,0 +1,5 @@
+# This file governs every project site on this domain (such as /form-builder/), so it must never disallow their paths.
+User-agent: *
+Allow: /
+
+Sitemap: https://whatsaaaa.github.io/sitemap-index.xml

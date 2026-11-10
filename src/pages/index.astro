@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjects } from '../lib/content';
+
+const featured = (await getProjects()).filter((p) => p.data.featured);
+---
+
+<Base>
+  <section aria-labelledby="intro">
+    <h1 id="intro">Hi, I build developer tools.</h1>
+    <p class="lead">
+      This is a placeholder introduction. It will say who I am, what I work on
+      and what this site is for.
+    </p>
+    <p>
+      Here you will find the projects, tools and ideas I am working on. Most of
+      the code lives on <a href="https://github.com/whatsaaaa">GitHub</a>.
+    </p>
+  </section>
+
+  <section aria-labelledby="featured">
+    <h2 id="featured">Featured projects</h2>
+    <ul class="card-list">
+      {featured.map((project) => (
+        <li>
+          <ProjectCard project={project} />
+        </li>
+      ))}
+    </ul>
+    <p>
+      <a href="/projects/">All projects</a>
+    </p>
+  </section>
+</Base>
