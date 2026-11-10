@@ -1,0 +1,41 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { formatDate, getIdeas } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const ideas = await getIdeas();
+  return ideas.map((idea) => ({
+    params: { slug: idea.id },
+    props: { idea },
+  }));
+}) satisfies GetStaticPaths;
+
+const { idea } = Astro.props;
+const { title, description, date } = idea.data;
+const { Content } = await render(idea);
+---
+
+<Base title={title} description={description}>
+  <p class="back">
+    <a href="/ideas/">All ideas</a>
+  </p>
+  <article>
+    <h1>{title}</h1>
+    <time class="muted" datetime={date.toISOString()}>
+      {formatDate(date)}
+    </time>
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  time {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+</style>

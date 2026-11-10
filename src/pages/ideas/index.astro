@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import { formatDate, getIdeas } from '../../lib/content';
+
+const ideas = await getIdeas();
+---
+
+<Base title="Ideas" description="Notes and ideas by whatsaaaa.">
+  <h1>Ideas</h1>
+  <p class="lead">Notes on things worth building or exploring.</p>
+  <ul class="idea-list">
+    {ideas.map((idea) => (
+      <li>
+        <a href={`/ideas/${idea.id}/`}>{idea.data.title}</a>
+        <p class="muted">{idea.data.description}</p>
+        <time class="muted" datetime={idea.data.date.toISOString()}>
+          {formatDate(idea.data.date)}
+        </time>
+      </li>
+    ))}
+  </ul>
+</Base>
+
+<style>
+  .idea-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .idea-list li + li {
+    margin-top: 1.75rem;
+  }
+
+  .idea-list a {
+    font-size: 1.1875rem;
+    font-weight: 600;
+  }
+
+  .idea-list p {
+    margin: 0.25rem 0;
+  }
+
+  time {
+    font-size: 0.875rem;
+  }
+</style>

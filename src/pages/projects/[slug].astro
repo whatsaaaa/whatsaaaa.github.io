@@ -1,0 +1,88 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import { getProjects } from '../../lib/content';
+
+export const getStaticPaths = (async () => {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}) satisfies GetStaticPaths;
+
+const { project } = Astro.props;
+const { title, description, status, tags, links } = project.data;
+const { Content } = await render(project);
+---
+
+<Base title={title} description={description}>
+  <p class="back">
+    <a href="/projects/">All projects</a>
+  </p>
+  <article>
+    <header>
+      <div class="title-row">
+        <h1>{title}</h1>
+        <StatusBadge status={status} />
+      </div>
+      <p class="lead">{description}</p>
+      {tags.length > 0 && (
+        <ul class="tags" aria-label="Tags">
+          {tags.map((tag) => (
+            <li>{tag}</li>
+          ))}
+        </ul>
+      )}
+    </header>
+    {links.length > 0 && (
+      <ul class="links" aria-label="Links">
+        {links.map((link) => (
+          <li>
+            <a href={link.url}>{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    )}
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .title-row h1 {
+    margin: 0;
+  }
+
+  .lead {
+    margin-bottom: 1rem;
+  }
+
+  .links {
+    list-style: none;
+    padding: 0;
+    margin: 1.75rem 0 2.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .links a {
+    font-weight: 600;
+  }
+
+  header + .prose {
+    margin-top: 2.25rem;
+  }
+</style>
