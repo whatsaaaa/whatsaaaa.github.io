@@ -1,173 +1,136 @@
-:root {
-  color-scheme: light dark;
-  --bg: #ffffff;
-  --surface: #f5f6f8;
-  --text: #1c1e21;
-  --muted: #5b6270;
-  --border: #dfe2e7;
-  --accent: #1d4ed8;
-  --accent-hover: #1e40af;
-  --focus: #2563eb;
-  --radius: 10px;
-  --max-width: 46rem;
-  --font-sans:
-    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
-  --font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #111317;
-    --surface: #1a1d23;
-    --text: #e6e8eb;
-    --muted: #9aa3b2;
-    --border: #2c313a;
-    --accent: #7aa2ff;
-    --accent-hover: #a3bfff;
-    --focus: #7aa2ff;
-  }
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
+/*
+ * The design system draws the frame: the window, the tab bar, the status line and every
+ * piece in them. This file only lays the window out on the screen and the pages inside it.
+ * Colors, type and space all come from its tokens.
+ */
+@import '@whatsaaaa/design-system/index.css';
 
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans);
-  font-size: 1.0625rem;
-  line-height: 1.65;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
   min-height: 100dvh;
+  padding: var(--ws-space-20);
 }
 
-main {
-  flex: 1;
-}
-
-.container {
-  width: 100%;
-  max-width: var(--max-width);
+/* On a wide screen the window fills it, and its content scrolls inside it. */
+.window {
+  height: calc(100dvh - 2 * var(--ws-space-20));
+  max-width: var(--ws-size-frame);
   margin-inline: auto;
-  padding-inline: 1.25rem;
 }
 
-h1,
-h2,
-h3 {
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+/*
+ * The window and the status line clip what crosses their edges, and a tab and a key fill
+ * their bar from edge to edge, so a focus ring outside them loses its top, or its top and
+ * bottom. It is drawn inside them instead, as the design system does for the keys switch.
+ * A key gets the room for it as padding, taken back from the gap between the keys.
+ */
+.ws-tabs a:focus-visible,
+.ws-status-line__keys :is(a, button):focus-visible {
+  outline-offset: calc(-1 * var(--ws-border-width-medium));
 }
 
-h1 {
-  font-size: clamp(1.875rem, 1.5rem + 1.5vw, 2.5rem);
-  margin: 0 0 0.75rem;
+.ws-status-line__keys :is(a, button) {
+  margin-inline: calc(-1 * var(--ws-space-8));
+  padding-inline: var(--ws-space-8);
 }
 
-h2 {
-  font-size: 1.375rem;
-  margin: 2.5rem 0 1rem;
+/*
+ * A prompt centers its chevron on its whole height, which sits between the lines of a
+ * prompt that wraps. It is kept on the first line instead, where it is just as centered.
+ */
+.ws-prompt {
+  align-items: flex-start;
 }
 
-a {
-  color: var(--accent);
-  text-underline-offset: 0.18em;
-}
-
-a:hover {
-  color: var(--accent-hover);
-}
-
-:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-  border-radius: 4px;
-}
-
-code {
-  font-family: var(--font-mono);
-  font-size: 0.9em;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 0.1em 0.35em;
-  overflow-wrap: anywhere;
-}
-
-.lead {
-  font-size: 1.1875rem;
-  color: var(--muted);
-  margin: 0 0 1.5rem;
-}
-
-.muted {
-  color: var(--muted);
+.ws-prompt::before {
+  margin-top: calc((1lh - 0.875em) / 2);
 }
 
 .skip-link {
   position: absolute;
-  left: 1rem;
-  top: -3rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--accent);
-  color: var(--bg);
-  border-radius: var(--radius);
-  z-index: 10;
+  top: var(--ws-space-8);
+  left: var(--ws-space-8);
+  z-index: 1;
+  padding: var(--ws-space-8) var(--ws-space-12);
+  border-radius: var(--ws-radius-md);
+  background: var(--ws-color-interactive);
+  color: var(--ws-color-on-interactive);
+  font: var(--ws-text-label);
+  text-decoration: none;
 }
 
-.skip-link:focus {
-  top: 1rem;
-  color: var(--bg);
+.skip-link:not(:focus) {
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.prose > :first-child {
-  margin-top: 0;
-}
-
-.prose li + li {
-  margin-top: 0.4rem;
-}
-
-.card-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+/* The home page: two panes side by side, each scrolling on its own. */
+.panes {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  min-height: 0;
 }
 
-.tags {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+.pane {
+  container-type: inline-size;
+  min-width: 0;
+  padding: var(--ws-space-40) var(--ws-space-48);
+  overflow: auto;
 }
 
-.tags li {
-  font-size: 0.8125rem;
-  line-height: 1.4;
-  padding: 0.15rem 0.55rem;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--muted);
+.pane + .pane {
+  border-left: var(--ws-border-width-thin) solid var(--ws-color-border);
 }
 
-.back {
-  margin: 0 0 1.5rem;
-  font-size: 0.9375rem;
+/* Every other page: one column, as wide as long-form text gets. */
+.page {
+  min-height: 0;
+  overflow: auto;
+}
+
+.column {
+  max-width: var(--ws-size-content);
+  margin-inline: auto;
+  padding: var(--ws-space-40) var(--ws-space-56) var(--ws-space-64);
+}
+
+/* A command that leads somewhere else, under what a section printed. */
+.next {
+  margin-top: var(--ws-space-24);
+}
+
+@media (width < 64rem) {
+  body {
+    padding: var(--ws-space-12);
+  }
+
+  /* on a phone the window grows with its content and the page scrolls */
+  .window {
+    height: auto;
+    min-height: calc(100dvh - 2 * var(--ws-space-12));
+  }
+
+  .panes {
+    display: block;
+  }
+
+  .pane {
+    padding: var(--ws-space-24) var(--ws-space-20);
+    overflow: visible;
+  }
+
+  .pane + .pane {
+    border-top: var(--ws-border-width-thin) solid var(--ws-color-border);
+    border-left: 0;
+  }
+
+  .page {
+    overflow: visible;
+  }
+
+  .column {
+    padding: var(--ws-space-24) var(--ws-space-20) var(--ws-space-48);
+  }
 }

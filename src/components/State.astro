@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+type Status = CollectionEntry<'projects'>['data']['status'];
+
+interface Props {
+  status: Status;
+}
+
+const { status } = Astro.props;
+// The design system colors the dot of these two. The others keep the plain dot, and every
+// state says its word.
+const modifiers: Partial<Record<Status, string>> = {
+  active: 'ws-state--active',
+  experimental: 'ws-state--experimental',
+};
+---
+
+<span class:list={['ws-state', modifiers[status]]}>{status}</span>

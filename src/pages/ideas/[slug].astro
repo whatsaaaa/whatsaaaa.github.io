@@ -1,8 +1,10 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
+import Document from '../../components/Document.astro';
+import PromptLink from '../../components/PromptLink.astro';
 import Base from '../../layouts/Base.astro';
-import { formatDate, getIdeas } from '../../lib/content';
+import { formatDate, getIdeas, isoDate } from '../../lib/content';
 
 export const getStaticPaths = (async () => {
   const ideas = await getIdeas();
@@ -15,27 +17,26 @@ export const getStaticPaths = (async () => {
 const { idea } = Astro.props;
 const { title, description, date } = idea.data;
 const { Content } = await render(idea);
+const file = `~/ideas/${idea.id}.md`;
 ---
 
-<Base title={title} description={description}>
-  <p class="back">
-    <a href="/ideas/">All ideas</a>
-  </p>
-  <article>
-    <h1>{title}</h1>
-    <time class="muted" datetime={date.toISOString()}>
-      {formatDate(date)}
-    </time>
-    <div class="prose">
-      <Content />
-    </div>
-  </article>
+<Base title={title} description={description} section="ideas" file={file}>
+  {/* an idea's body is no longer than its description, so the body is the lead */}
+  <Document file={file} title={title}>
+    <p class="date" slot="facts">
+      <time datetime={isoDate(date)}>{formatDate(date)}</time>
+    </p>
+    <Content />
+  </Document>
+  <PromptLink href="/ideas/" comment="all ideas">
+    cd ~/ideas
+  </PromptLink>
 </Base>
 
 <style>
-  time {
-    display: block;
-    font-size: 0.875rem;
-    margin-bottom: 2rem;
+  .date {
+    margin-top: var(--ws-space-20);
+    color: var(--ws-color-text-secondary);
+    font: var(--ws-text-caption);
   }
 </style>

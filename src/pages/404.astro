@@ -1,13 +1,95 @@
 ---
+import { ghostSvg } from '@whatsaaaa/design-system/ghost';
+import PromptLink from '../components/PromptLink.astro';
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Page not found">
-  <h1>Page not found</h1>
-  <p class="lead">There is nothing at this address.</p>
-  <p>
-    Try the <a href="/">home page</a> or the{' '}
-    <a href="/projects/">project list</a>. Project documentation lives at its
-    own path, for example <a href="/form-builder/">/form-builder/</a>.
+<Base title="Page not found" file="~" noindex>
+  <p class="ws-prompt">
+    cd <span data-missing-path>this-page</span>
+  </p>
+  <div class="ws-output">
+    <p>
+      cd: no such file or directory: <span data-missing-path>this-page</span>
+    </p>
+  </div>
+  <div class="lost">
+    <span set:html={ghostSvg({ px: 6, pose: 'lost' })} />
+    <div>
+      <h1>page not found</h1>
+      <p>There is nothing at this address.</p>
+    </div>
+  </div>
+  <PromptLink href="/" comment="home">
+    cd ~
+  </PromptLink>
+  <PromptLink href="/projects/" comment="all projects">
+    ls ~/projects
+  </PromptLink>
+  <p class="docs">
+    Project documentation lives at its own path, for example{' '}
+    <a href="/form-builder/">/form-builder/</a>.
   </p>
 </Base>
+
+<script>
+  // GitHub Pages serves this page at the address that was not found
+  let path = location.pathname;
+  try {
+    path = decodeURIComponent(path);
+  } catch {
+    // a malformed escape: show the path as it came
+  }
+  for (const element of document.querySelectorAll('[data-missing-path]')) {
+    element.textContent = path;
+  }
+</script>
+
+<style>
+  .ws-prompt,
+  .ws-output {
+    overflow-wrap: anywhere;
+  }
+
+  .ws-output {
+    margin-top: var(--ws-space-16);
+  }
+
+  .lost {
+    display: flex;
+    align-items: center;
+    gap: var(--ws-space-20);
+    margin-block: var(--ws-space-40);
+  }
+
+  h1 {
+    font: var(--ws-text-h1);
+    letter-spacing: var(--ws-text-h1-letter-spacing);
+  }
+
+  .lost p {
+    margin-top: var(--ws-space-8);
+    color: var(--ws-color-text-secondary);
+    font: var(--ws-text-lead);
+  }
+
+  .docs {
+    margin-top: var(--ws-space-40);
+    color: var(--ws-color-text-secondary);
+    font: var(--ws-text-body-sm);
+  }
+
+  @media (width < 64rem) {
+    /* the ghost goes above the heading, which has no room beside it */
+    .lost {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--ws-space-16);
+    }
+
+    h1 {
+      font: var(--ws-text-h1-compact);
+      letter-spacing: var(--ws-text-h1-compact-letter-spacing);
+    }
+  }
+</style>

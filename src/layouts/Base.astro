@@ -1,27 +1,39 @@
 ---
+import { keysInitScript } from '@whatsaaaa/design-system/shortcuts';
+import { themeInitScript } from '@whatsaaaa/design-system/theme';
+import { resolver } from '@whatsaaaa/design-system/tokens';
+import StatusLine from '../components/StatusLine.astro';
+import TabBar from '../components/TabBar.astro';
+import { siteDescription, siteName, type Section } from '../lib/site';
 import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
+  /** The section whose tab is current. */
+  section?: Section;
+  /** Where the page is, as a path in the terminal, for the status line. */
+  file: string;
+  /** `panes` for the home page, `page` for one scrolling column. */
+  layout?: 'panes' | 'page';
+  /** Keeps the page out of search engines, and leaves out its canonical URL. */
+  noindex?: boolean;
 }
 
-const siteName = 'whatsaaaa';
-const { title, description = 'Projects, tools and ideas by whatsaaaa.' } =
-  Astro.props;
+const {
+  title,
+  description = siteDescription,
+  section,
+  file,
+  layout = 'page',
+  noindex = false,
+} = Astro.props;
 const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const path = Astro.url.pathname;
-
-const nav = [
-  { href: '/', label: 'Home' },
-  { href: '/projects/', label: 'Projects' },
-  { href: '/ideas/', label: 'Ideas' },
-];
-
-function isCurrent(href: string) {
-  return href === '/' ? path === '/' : path.startsWith(href);
-}
+const socialCard = new URL('/social-card.png', Astro.site);
+// the color of the browser's own bars, from the tokens
+const background = (theme: 'dark' | 'light') =>
+  resolver.apply({ theme })['color.bg'].$value.hex;
 ---
 
 <!doctype html>
@@ -29,125 +41,70 @@ function isCurrent(href: string) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
+    {/* a remembered theme and keys apply before the first paint, so before the stylesheet */}
+    <script is:inline set:html={themeInitScript} />
+    <script is:inline set:html={keysInitScript} />
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta
       name="theme-color"
-      content="#ffffff"
-      media="(prefers-color-scheme: light)"
+      content={background('dark')}
+      media="not (prefers-color-scheme: light)"
     />
     <meta
       name="theme-color"
-      content="#111317"
-      media="(prefers-color-scheme: dark)"
+      content={background('light')}
+      media="(prefers-color-scheme: light)"
     />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={socialCard} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content={siteName} />
+    {/* X reads the title, the description and the image from the og: tags */}
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <a class="skip-link" href="#main">
       Skip to content
     </a>
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="brand" href="/">
-          whatsaaaa
-        </a>
-        <nav aria-label="Main">
-          <ul>
-            {nav.map((item) => (
-              <li>
-                <a
-                  href={item.href}
-                  aria-current={isCurrent(item.href) ? 'page' : undefined}
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </header>
-    <main id="main" class="container">
-      <slot />
-    </main>
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <span>whatsaaaa</span>
-        <a href="https://github.com/whatsaaaa">GitHub</a>
-      </div>
-    </footer>
+    <div class="ws-term window">
+      <TabBar section={section} />
+      {layout === 'panes' ? (
+        <main id="main" class="panes">
+          <slot />
+        </main>
+      ) : (
+        <main id="main" class="page">
+          <div class="column">
+            <slot />
+          </div>
+        </main>
+      )}
+      <StatusLine file={file} />
+    </div>
+    <script>
+      import { defineGhost } from '@whatsaaaa/design-system/ghost';
+      import { enableShortcuts } from '@whatsaaaa/design-system/shortcuts';
+      import { toggleTheme } from '@whatsaaaa/design-system/theme';
+
+      defineGhost();
+      enableShortcuts();
+      document
+        .querySelector('[data-toggle-theme]')
+        ?.addEventListener('click', toggleTheme);
+    </script>
   </body>
 </html>
-
-<style>
-  .site-header {
-    border-bottom: 1px solid var(--border);
-  }
-
-  .header-inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem 1.5rem;
-    padding-block: 1rem;
-  }
-
-  .brand {
-    font-weight: 700;
-    font-size: 1.125rem;
-    color: var(--text);
-    text-decoration: none;
-  }
-
-  nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 1.25rem;
-  }
-
-  nav a {
-    color: var(--muted);
-    text-decoration: none;
-  }
-
-  nav a:hover,
-  nav a[aria-current='page'] {
-    color: var(--text);
-  }
-
-  nav a[aria-current='page'] {
-    text-decoration: underline;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.4em;
-  }
-
-  main {
-    padding-block: 3rem 4rem;
-  }
-
-  .site-footer {
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 0.9375rem;
-  }
-
-  .footer-inner {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-block: 1.5rem;
-  }
-</style>

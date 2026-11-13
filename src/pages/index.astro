@@ -1,35 +1,140 @@
 ---
+import Entry from '../components/Entry.astro';
+import Ghost from '../components/Ghost.astro';
+import Listing from '../components/Listing.astro';
+import PromptLink from '../components/PromptLink.astro';
+import State from '../components/State.astro';
 import Base from '../layouts/Base.astro';
-import ProjectCard from '../components/ProjectCard.astro';
 import { getProjects } from '../lib/content';
+import { siteName } from '../lib/site';
 
 const featured = (await getProjects()).filter((p) => p.data.featured);
+const stack = [
+  'C#',
+  '.NET',
+  'Go',
+  'Postgres',
+  'Vue',
+  'Nuxt',
+  'TypeScript',
+  'Nix',
+];
 ---
 
-<Base>
-  <section aria-labelledby="intro">
-    <h1 id="intro">Hi, I build developer tools.</h1>
-    <p class="lead">
-      This is a placeholder introduction. It will say who I am, what I work on
-      and what this site is for.
-    </p>
-    <p>
-      Here you will find the projects, tools and ideas I am working on. Most of
-      the code lives on <a href="https://github.com/whatsaaaa">GitHub</a>.
-    </p>
-  </section>
-
-  <section aria-labelledby="featured">
-    <h2 id="featured">Featured projects</h2>
-    <ul class="card-list">
-      {featured.map((project) => (
-        <li>
-          <ProjectCard project={project} />
-        </li>
+<Base section="home" file="~/whatsaaaa" layout="panes">
+  <section class="pane" aria-labelledby="who">
+    <p class="ws-prompt">whoami</p>
+    <div class="who">
+      <Ghost px={6} />
+      <div>
+        <h1 id="who">
+          {siteName}
+          <span class="ws-cursor" aria-hidden="true"></span>
+        </h1>
+        <p class="role">Building things end to end.</p>
+      </div>
+    </div>
+    <div class="ws-output">
+      <p>
+        I build web applications from top to bottom:{' '}
+        <strong>Vue and Nuxt</strong> on the front, <strong>C#/.NET</strong> and{' '}
+        <strong>Go</strong> with <strong>Postgres</strong> doing the heavy
+        lifting behind them. My favorite part is owning the whole thing, from
+        sketching the database schema to polishing the last button on the page.
+      </p>
+      <p>
+        The handle is a long, drawn-out shout from a movie I watched as a kid.
+        It stuck.
+      </p>
+    </div>
+    <h2 class="ws-prompt" id="stack">
+      cat stack.txt
+    </h2>
+    <ul class="stack" aria-labelledby="stack">
+      {stack.map((item) => (
+        <li class="ws-tag ws-tag--outline">{item}</li>
       ))}
     </ul>
-    <p>
-      <a href="/projects/">All projects</a>
-    </p>
+  </section>
+
+  <section class="pane" aria-labelledby="projects">
+    <Listing command="ls ~/projects" count={featured.length} id="projects">
+      {featured.map((project) => (
+        <Entry
+          href={`/projects/${project.id}/`}
+          title={project.data.title}
+          description={project.data.description}
+          tags={project.data.tags}
+        >
+          <State slot="meta" status={project.data.status} />
+        </Entry>
+      ))}
+    </Listing>
+    <PromptLink href="/projects/" comment="all projects">
+      cd ~/projects
+    </PromptLink>
   </section>
 </Base>
+
+<style>
+  .who {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ws-space-20);
+    margin-top: var(--ws-space-24);
+  }
+
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: var(--ws-space-12);
+    font: var(--ws-text-display);
+    letter-spacing: var(--ws-text-display-letter-spacing);
+  }
+
+  .role {
+    margin-top: var(--ws-space-10);
+    font-size: var(--ws-font-size-20);
+    font-weight: var(--ws-font-weight-medium);
+  }
+
+  .ws-output {
+    margin-bottom: var(--ws-space-40);
+  }
+
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ws-space-8);
+    margin-top: var(--ws-space-16);
+  }
+
+  /* a pane too narrow for the display size takes the compact one */
+  @container (width < 29rem) {
+    h1 {
+      font: var(--ws-text-display-compact);
+      letter-spacing: var(--ws-text-display-compact-letter-spacing);
+    }
+  }
+
+  @media (width < 64rem) {
+    .who {
+      gap: var(--ws-space-14);
+    }
+
+    h1 {
+      font: var(--ws-text-display-compact);
+      letter-spacing: var(--ws-text-display-compact-letter-spacing);
+    }
+
+    /* four screen pixels per sprite pixel instead of six */
+    .who :global(.ws-ghost__sprite) {
+      width: 2.5rem;
+      height: 3rem;
+    }
+
+    .role {
+      font-size: var(--ws-font-size-18);
+    }
+  }
+</style>

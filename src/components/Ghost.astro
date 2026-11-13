@@ -1,0 +1,16 @@
+---
+// The ghost with its easter egg, rendered on the server so it shows before any script runs.
+// The client script in the base layout registers <ws-ghost>, which makes it pressable.
+import { ghostMarkup } from '@whatsaaaa/design-system/ghost';
+
+interface Props {
+  /** Size of one sprite pixel in CSS pixels. */
+  px: number;
+  /** Fixes the side the speech bubble takes. */
+  bubble?: 'above' | 'below';
+}
+
+const { px, bubble } = Astro.props;
+---
+
+<ws-ghost px={px} bubble={bubble} set:html={ghostMarkup({ px })} />

@@ -1,0 +1,16 @@
+---
+// A command that leads somewhere: the command is the link, and a comment says where.
+interface Props {
+  href: string;
+  comment: string;
+}
+
+const { href, comment } = Astro.props;
+---
+
+<p class="ws-prompt next">
+  <a href={href}>
+    <slot />
+  </a>
+  <span class="ws-prompt__comment"># {comment}</span>
+</p>

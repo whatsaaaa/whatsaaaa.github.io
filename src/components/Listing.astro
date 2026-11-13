@@ -1,0 +1,35 @@
+---
+// What `ls` prints: the command as a heading, a count, and one Entry per item.
+interface Props {
+  /** The command whose output the list is, such as `ls ~/projects`. */
+  command: string;
+  count: number;
+  /** 1 when the list is the page, 2 when it is a section of one. */
+  level?: 1 | 2;
+  id?: string;
+}
+
+const { command, count, level = 2, id } = Astro.props;
+const Heading = level === 1 ? 'h1' : 'h2';
+---
+
+<Heading class="ws-prompt" id={id}>
+  {command}
+</Heading>
+<p class="total">total {count}</p>
+<ol class="ls">
+  <slot />
+</ol>
+
+<style>
+  .total {
+    margin-top: var(--ws-space-20);
+    color: var(--ws-color-text-secondary);
+    font: var(--ws-text-label-sm);
+  }
+
+  .ls {
+    margin-top: var(--ws-space-8);
+    border-top: var(--ws-border-width-thin) dashed var(--ws-color-border);
+  }
+</style>

@@ -11,6 +11,9 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.7.4
         version: 3.7.4
+      '@whatsaaaa/design-system':
+        specifier: ^0.1.0
+        version: 0.1.0
       astro:
         specifier: ^7.4.8
         version: 7.4.8(@types/node@24.19.2)(yaml@2.9.1)
@@ -681,6 +684,9 @@ packages:
   '@shikijs/vscode-textmate@10.1.0':
     resolution: {integrity: sha512-cVBuhDQjBZaNMTwBquYfPydrUP+E3hE6oYGasx8h6ZrODIM7/r+gxLDXdd66oszbrggZHEntdE6j+5gYIVyMWQ==}
 
+  '@terrazzo/token-types@2.10.0':
+    resolution: {integrity: sha512-93HnrQPUFsZv0k9Z2L0zsxwd2IVLmoI78TwfnHhKPDnGrE+hVyzYRlFi/5ihspNFIbfnXMHW1EmxeiF9m6UPiQ==}
+
   '@tybys/wasm-util@0.10.4':
     resolution: {integrity: sha512-W3c4gRigFS0T/Ma4qIYF3GDAc5AQdHb1yL5znJT1Zv1YaD9Kitx656wBjvr19qbiosmZT8lWDM5BEMynUqX65A==}
 
@@ -816,6 +822,18 @@ packages:
 
   '@vscode/l10n@0.0.18':
     resolution: {integrity: sha512-KYSIHVmslkaCDyw013pphY+d7x1qV8IZupYfeIfzNA+nsaWHbn5uPuQRvdRFsa9zFzGeudPuoGoZ1Op4jrJXIQ==}
+
+  '@whatsaaaa/design-system@0.1.0':
+    resolution: {integrity: sha512-ZqYSDsLeRRSZAkS4zpva5TFUeq/zaMNJQ8hDcwlOYTzN6uHyrjCYJrIJUBDLHRugGK12gs0I9HM7xlWcfdCE0w==}
+    engines: {node: ^22.18.0 || >=24.12.0}
+    peerDependencies:
+      vitepress: ^1.6.4
+      vue: ^3.5.0
+    peerDependenciesMeta:
+      vitepress:
+        optional: true
+      vue:
+        optional: true
 
   acorn-jsx@5.3.2:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
@@ -2605,6 +2623,8 @@ snapshots:
 
   '@shikijs/vscode-textmate@10.1.0': {}
 
+  '@terrazzo/token-types@2.10.0': {}
+
   '@tybys/wasm-util@0.10.4':
     dependencies:
       tslib: 2.9.1
@@ -2790,6 +2810,10 @@ snapshots:
       vscode-uri: 3.2.0
 
   '@vscode/l10n@0.0.18': {}
+
+  '@whatsaaaa/design-system@0.1.0':
+    dependencies:
+      '@terrazzo/token-types': 2.10.0
 
   acorn-jsx@5.3.2(acorn@8.19.0):
     dependencies:
