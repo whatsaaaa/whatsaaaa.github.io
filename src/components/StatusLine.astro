@@ -14,13 +14,14 @@ const directory = file.slice(0, file.length - name.length);
 
 <footer class="ws-status-line" aria-label="Status">
   <span class="ws-status-line__mode">NORMAL</span>
-  <span class="ws-status-line__file">
-    <span>
-      <span class="directory">{directory}</span>
-      {name}
+  <span class="path">
+    <span class="ws-status-line__file">
+      <span>
+        <span class="directory">{directory}</span>
+        {name}
+      </span>
     </span>
   </span>
-  <span class="ws-status-line__spacer"></span>
   <span class="ws-status-line__keys">
     <a href="/projects/" data-ws-key="p">
       <kbd class="ws-kbd">p</kbd>projects
@@ -81,6 +82,26 @@ const directory = file.slice(0, file.length - name.length);
   /* On a phone the tab says where the file is, and its name keeps the room. */
   @media (width < 64rem) {
     .directory {
+      display: none;
+    }
+  }
+
+  /*
+   * The path takes the room the others leave, and gives way to them inside it: its name
+   * down to its first character and the ellipsis, then the whole path at once, padding and
+   * all, so a part of a character never shows. The room is what is measured, as the path
+   * itself is only as wide as its name.
+   */
+  .path {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    container-type: inline-size;
+  }
+
+  /* a character and the ellipsis, between the padding of the path at its widest */
+  @container (width < calc(2ch + 2 * 0.875rem)) {
+    .ws-status-line__file {
       display: none;
     }
   }

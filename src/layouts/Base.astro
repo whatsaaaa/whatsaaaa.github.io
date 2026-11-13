@@ -145,12 +145,6 @@ const backgrounds = { dark: background('dark'), light: background('light') };
           keepFocus(focused);
         });
       }
-      // the browser lets go of the focus of one that hides, as when the system switches
-      for (const name of names) {
-        name.addEventListener('focusout', (event) => {
-          if (event.relatedTarget === null) keepFocus(name);
-        });
-      }
     </script>
   </body>
 </html>
