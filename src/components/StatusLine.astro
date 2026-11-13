@@ -1,0 +1,132 @@
+---
+import { github } from '../lib/site';
+
+interface Props {
+  /** Where the page is, as a path in the terminal. */
+  file: string;
+}
+
+const { file } = Astro.props;
+// `~/projects/form-builder.md` is `~/projects/` and `form-builder.md`
+const name = file.slice(file.lastIndexOf('/') + 1);
+const directory = file.slice(0, file.length - name.length);
+---
+
+<footer class="ws-status-line" aria-label="Status">
+  <span class="ws-status-line__mode">NORMAL</span>
+  <span class="path">
+    <span class="ws-status-line__file">
+      <span>
+        <span class="directory">{directory}</span>
+        {name}
+      </span>
+    </span>
+  </span>
+  <span class="ws-status-line__keys">
+    <a href="/projects/" data-ws-key="p">
+      <kbd class="ws-kbd">p</kbd>projects
+    </a>
+    <a href="/ideas/" data-ws-key="i">
+      <kbd class="ws-kbd">i</kbd>ideas
+    </a>
+    <a href={github} data-ws-key="g">
+      <kbd class="ws-kbd">g</kbd>github
+    </a>
+    <button
+      type="button"
+      data-ws-key="t"
+      aria-label="Switch theme"
+      data-toggle-theme
+    >
+      <kbd class="ws-kbd">t</kbd>theme
+    </button>
+  </span>
+  <button
+    type="button"
+    class="ws-status-line__switch"
+    role="switch"
+    aria-label="Shortcut keys"
+    data-ws-keys-switch
+  >
+    keys
+    <span class="ws-status-line__on" aria-hidden="true">
+      on
+    </span>
+    <span class="ws-status-line__off" aria-hidden="true">
+      off
+    </span>
+  </button>
+  {/* The name of the theme, which also switches it: the hints are hidden on a narrow
+       screen, and this is not. Both names are in the page and the styles show the theme's. */}
+  <button
+    type="button"
+    class="theme ws-status-line__item ws-status-line__item--edge ws-status-line__item--dark"
+    aria-label="Switch theme, now rose-pine"
+    data-toggle-theme
+    data-theme-name
+  >
+    rose-pine
+  </button>
+  <button
+    type="button"
+    class="theme ws-status-line__item ws-status-line__item--edge ws-status-line__item--light"
+    aria-label="Switch theme, now rose-pine-dawn"
+    data-toggle-theme
+    data-theme-name
+  >
+    rose-pine-dawn
+  </button>
+</footer>
+
+<style>
+  /* On a phone the tab says where the file is, and its name keeps the room. */
+  @media (width < 64rem) {
+    .directory {
+      display: none;
+    }
+  }
+
+  /*
+   * The path takes the room the others leave, and gives way to them inside it: its name
+   * down to its first character and the ellipsis, then the whole path at once, padding and
+   * all, so a part of a character never shows. The room is what is measured, as the path
+   * itself is only as wide as its name.
+   */
+  .path {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    container-type: inline-size;
+  }
+
+  /* a character and the ellipsis, between the padding of the path at its widest */
+  @container (width < calc(2ch + 2 * 0.875rem)) {
+    .ws-status-line__file {
+      display: none;
+    }
+  }
+
+  .theme {
+    margin: 0;
+    padding-block: 0;
+    border-block: 0;
+    border-right: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    background: none;
+  }
+
+  .theme:hover {
+    color: var(--ws-color-text);
+  }
+
+  /* inside it, as the keys switch's: the line cuts off what reaches past its edges, and in
+     the window's corner the ring follows the window's curve */
+  .theme:focus-visible {
+    border-radius: var(--ws-radius-sm) var(--ws-radius-sm)
+      calc(var(--ws-radius-xl) - var(--ws-border-width-thin))
+      var(--ws-radius-sm);
+    outline-offset: calc(-1 * var(--ws-border-width-medium));
+  }
+</style>

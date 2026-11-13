@@ -16,6 +16,11 @@ export async function getIdeas() {
   return ideas.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
+/** The day of a date as `2026-11-13`, the way `ls` prints it. */
+export function isoDate(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+
 export function formatDate(date: Date) {
   return date.toLocaleDateString('en-US', {
     year: 'numeric',

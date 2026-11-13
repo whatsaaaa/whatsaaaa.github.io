@@ -1,19 +1,34 @@
 ---
+import Entry from '../../components/Entry.astro';
+import Listing from '../../components/Listing.astro';
+import PromptLink from '../../components/PromptLink.astro';
+import State from '../../components/State.astro';
 import Base from '../../layouts/Base.astro';
-import ProjectCard from '../../components/ProjectCard.astro';
 import { getProjects } from '../../lib/content';
 
 const projects = await getProjects();
 ---
 
-<Base title="Projects" description="Projects and tools by whatsaaaa.">
-  <h1>Projects</h1>
-  <p class="lead">Libraries, tools and experiments.</p>
-  <ul class="card-list">
+<Base
+  title="Projects"
+  description="Projects and tools by whatsaaaa."
+  section="projects"
+  file="~/projects"
+>
+  <Listing command="ls ~/projects" count={projects.length} level={1}>
     {projects.map((project) => (
-      <li>
-        <ProjectCard project={project} />
-      </li>
+      <Entry
+        href={`/projects/${project.id}/`}
+        title={project.data.title}
+        description={project.data.description}
+        tags={project.data.tags}
+        level={2}
+      >
+        <State slot="meta" status={project.data.status} />
+      </Entry>
     ))}
-  </ul>
+  </Listing>
+  <PromptLink href="/ideas/" comment="ideas">
+    ls ~/ideas
+  </PromptLink>
 </Base>

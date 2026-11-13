@@ -1,0 +1,56 @@
+---
+// A page of a project or an idea: the file as `cat` prints it, with the title, a lead and
+// what is known about it on top, and the Markdown body below.
+interface Props {
+  /** The path of the file in the terminal, such as `~/projects/form-builder.md`. */
+  file: string;
+  title: string;
+  /** Shown under the title. Leave it out when the body says no more than it. */
+  lead?: string;
+}
+
+const { file, title, lead } = Astro.props;
+---
+
+<article>
+  <header>
+    <p class="ws-prompt">cat {file}</p>
+    <h1>{title}</h1>
+    {lead && <p class="lead">{lead}</p>}
+    <slot name="facts" />
+  </header>
+  <div class="ws-prose">
+    <slot />
+  </div>
+</article>
+
+<style>
+  header {
+    padding-bottom: var(--ws-space-32);
+    border-bottom: var(--ws-border-width-thin) solid var(--ws-color-border);
+  }
+
+  h1 {
+    margin-top: var(--ws-space-24);
+    font: var(--ws-text-h1);
+    letter-spacing: var(--ws-text-h1-letter-spacing);
+    overflow-wrap: anywhere;
+  }
+
+  .lead {
+    margin-top: var(--ws-space-16);
+    color: var(--ws-color-text-secondary);
+    font: var(--ws-text-lead);
+  }
+
+  .ws-prose {
+    margin-top: var(--ws-space-32);
+  }
+
+  @media (width < 64rem) {
+    h1 {
+      font: var(--ws-text-h1-compact);
+      letter-spacing: var(--ws-text-h1-compact-letter-spacing);
+    }
+  }
+</style>

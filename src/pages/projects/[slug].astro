@@ -1,8 +1,10 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
+import Document from '../../components/Document.astro';
+import PromptLink from '../../components/PromptLink.astro';
+import State from '../../components/State.astro';
 import Base from '../../layouts/Base.astro';
-import StatusBadge from '../../components/StatusBadge.astro';
 import { getProjects } from '../../lib/content';
 
 export const getStaticPaths = (async () => {
@@ -16,73 +18,64 @@ export const getStaticPaths = (async () => {
 const { project } = Astro.props;
 const { title, description, status, tags, links } = project.data;
 const { Content } = await render(project);
+const file = `~/projects/${project.id}.md`;
 ---
 
-<Base title={title} description={description}>
-  <p class="back">
-    <a href="/projects/">All projects</a>
-  </p>
-  <article>
-    <header>
-      <div class="title-row">
-        <h1>{title}</h1>
-        <StatusBadge status={status} />
-      </div>
-      <p class="lead">{description}</p>
+<Base title={title} description={description} section="projects" file={file}>
+  <Document file={file} title={title} lead={description}>
+    <div class="facts" slot="facts">
+      <State status={status} />
       {tags.length > 0 && (
-        <ul class="tags" aria-label="Tags">
+        <ul class="tags" aria-label="Built with">
           {tags.map((tag) => (
-            <li>{tag}</li>
+            <li class="ws-tag">{tag}</li>
           ))}
         </ul>
       )}
-    </header>
+    </div>
     {links.length > 0 && (
-      <ul class="links" aria-label="Links">
+      <ul class="links" slot="facts" aria-label="Links">
         {links.map((link) => (
           <li>
-            <a href={link.url}>{link.label}</a>
+            <a class="ws-arrow" href={link.url}>
+              {link.label}
+            </a>
           </li>
         ))}
       </ul>
     )}
-    <div class="prose">
-      <Content />
-    </div>
-  </article>
+    <Content />
+  </Document>
+  <PromptLink href="/projects/" comment="all projects">
+    cd ~/projects
+  </PromptLink>
 </Base>
 
 <style>
-  .title-row {
+  .facts {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem 1rem;
-    margin-bottom: 0.75rem;
+    gap: var(--ws-space-8) var(--ws-space-16);
+    margin-top: var(--ws-space-20);
   }
 
-  .title-row h1 {
-    margin: 0;
-  }
-
-  .lead {
-    margin-bottom: 1rem;
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ws-space-6);
   }
 
   .links {
-    list-style: none;
-    padding: 0;
-    margin: 1.75rem 0 2.25rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
+    gap: var(--ws-space-8) var(--ws-space-24);
+    margin-top: var(--ws-space-20);
+    font: var(--ws-text-label);
   }
 
+  /* the arrow stays with the label */
   .links a {
-    font-weight: 600;
-  }
-
-  header + .prose {
-    margin-top: 2.25rem;
+    white-space: nowrap;
   }
 </style>

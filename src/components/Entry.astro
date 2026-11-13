@@ -1,0 +1,94 @@
+---
+// One line of a Listing: what is known about the item in the left column, such as its
+// state, and its name, description and tags on the right.
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  tags?: string[];
+  /** One below the level of the list's command. */
+  level?: 2 | 3;
+}
+
+const { href, title, description, tags = [], level = 3 } = Astro.props;
+const Heading = level === 2 ? 'h2' : 'h3';
+---
+
+<li class="entry">
+  <div class="meta">
+    <slot name="meta" />
+  </div>
+  <div class="body">
+    <Heading class="title">
+      <a href={href}>{title}</a>
+    </Heading>
+    <p>{description}</p>
+    {tags.length > 0 && (
+      <ul class="tags" aria-label="Built with">
+        {tags.map((tag) => (
+          <li class="ws-tag">{tag}</li>
+        ))}
+      </ul>
+    )}
+  </div>
+</li>
+
+<style>
+  /* the meta column and the title share a baseline */
+  .entry {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--ws-space-16);
+    padding-block: var(--ws-space-20);
+    border-bottom: var(--ws-border-width-thin) dashed var(--ws-color-border);
+  }
+
+  .meta {
+    color: var(--ws-color-text-secondary);
+    font: var(--ws-text-caption);
+  }
+
+  /* A state takes its baseline from its dot, which sits half a pixel off the one of its
+     word. Its word gives it the baseline instead, and the dot stays centered. */
+  .meta :global(.ws-state) {
+    align-items: baseline;
+  }
+
+  .meta :global(.ws-state)::before {
+    align-self: center;
+  }
+
+  .title {
+    font: var(--ws-text-h4);
+  }
+
+  .title a {
+    color: var(--ws-color-text);
+    text-decoration: none;
+  }
+
+  .title a:hover {
+    color: var(--ws-color-interactive);
+  }
+
+  p {
+    margin-top: var(--ws-space-6);
+    color: var(--ws-color-text-secondary);
+    font: var(--ws-text-body-sm);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ws-space-6);
+    margin-top: var(--ws-space-12);
+  }
+
+  @media (width < 64rem) {
+    .entry {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--ws-space-4);
+    }
+  }
+</style>

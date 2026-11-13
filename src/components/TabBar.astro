@@ -1,0 +1,37 @@
+---
+import Ghost from './Ghost.astro';
+import { github, sections, siteName, type Section } from '../lib/site';
+
+interface Props {
+  /** The section the page is in. Its tab is the current one, on its detail pages too. */
+  section?: Section;
+}
+
+const { section } = Astro.props;
+---
+
+<header class="ws-tab-bar">
+  <span class="ws-tab-bar__brand">
+    <Ghost px={2} bubble="below" />
+    <a href="/">{siteName}</a>
+  </span>
+  <nav class="ws-tabs" aria-label="Main">
+    <ul>
+      {sections.map((tab) => (
+        <li>
+          <a
+            href={tab.href}
+            aria-current={tab.id === section ? 'page' : undefined}
+          >
+            {tab.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+  <div class="ws-tab-bar__end">
+    <a class="ws-arrow" href={github}>
+      github
+    </a>
+  </div>
+</header>

@@ -1,47 +1,34 @@
 ---
+import Entry from '../../components/Entry.astro';
+import Listing from '../../components/Listing.astro';
+import PromptLink from '../../components/PromptLink.astro';
 import Base from '../../layouts/Base.astro';
-import { formatDate, getIdeas } from '../../lib/content';
+import { getIdeas, isoDate } from '../../lib/content';
 
 const ideas = await getIdeas();
 ---
 
-<Base title="Ideas" description="Notes and ideas by whatsaaaa.">
-  <h1>Ideas</h1>
-  <p class="lead">Notes on things worth building or exploring.</p>
-  <ul class="idea-list">
+<Base
+  title="Ideas"
+  description="Ideas by whatsaaaa: things worth building next."
+  section="ideas"
+  file="~/ideas"
+>
+  <Listing command="ls ~/ideas" count={ideas.length} level={1}>
     {ideas.map((idea) => (
-      <li>
-        <a href={`/ideas/${idea.id}/`}>{idea.data.title}</a>
-        <p class="muted">{idea.data.description}</p>
-        <time class="muted" datetime={idea.data.date.toISOString()}>
-          {formatDate(idea.data.date)}
+      <Entry
+        href={`/ideas/${idea.id}/`}
+        title={idea.data.title}
+        description={idea.data.description}
+        level={2}
+      >
+        <time slot="meta" datetime={isoDate(idea.data.date)}>
+          {isoDate(idea.data.date)}
         </time>
-      </li>
+      </Entry>
     ))}
-  </ul>
+  </Listing>
+  <PromptLink href="/projects/" comment="projects">
+    ls ~/projects
+  </PromptLink>
 </Base>
-
-<style>
-  .idea-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .idea-list li + li {
-    margin-top: 1.75rem;
-  }
-
-  .idea-list a {
-    font-size: 1.1875rem;
-    font-weight: 600;
-  }
-
-  .idea-list p {
-    margin: 0.25rem 0;
-  }
-
-  time {
-    font-size: 0.875rem;
-  }
-</style>
