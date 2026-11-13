@@ -1,3 +1,5 @@
+<img src=".github/assets/readme-header.svg" alt="whatsaaaa" width="100%">
+
 # whatsaaaa.github.io
 
 Personal landing page for projects, tools and ideas, served at <https://whatsaaaa.github.io/>. Built with [Astro](https://astro.build).
