@@ -1,0 +1,4 @@
+# The design system is our own package. Take its releases the day they are
+# published instead of waiting out pnpm's default one-day minimumReleaseAge.
+minimumReleaseAgeExclude:
+  - '@whatsaaaa/design-system'
