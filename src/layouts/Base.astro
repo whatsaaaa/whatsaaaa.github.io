@@ -102,9 +102,21 @@ const background = (theme: 'dark' | 'light') =>
 
       defineGhost();
       enableShortcuts();
-      document
-        .querySelector('[data-toggle-theme]')
-        ?.addEventListener('click', toggleTheme);
+      for (const control of document.querySelectorAll<HTMLElement>(
+        '[data-toggle-theme]',
+      )) {
+        control.addEventListener('click', () => {
+          const focused = document.activeElement === control;
+          toggleTheme();
+          // The theme's name is a button per theme, and only the one of the theme shows.
+          // When the focused one hides, the focus goes to the one that shows now.
+          if (focused && control.getClientRects().length === 0) {
+            [...document.querySelectorAll<HTMLElement>('[data-theme-name]')]
+              .find((name) => name.getClientRects().length > 0)
+              ?.focus();
+          }
+        });
+      }
     </script>
   </body>
 </html>
