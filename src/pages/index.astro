@@ -96,6 +96,7 @@ const stack = [
     margin-top: var(--ws-space-10);
     font-size: var(--ws-font-size-20);
     font-weight: var(--ws-font-weight-medium);
+    text-wrap: balance;
   }
 
   .ws-output {
@@ -135,6 +136,14 @@ const stack = [
 
     .role {
       font-size: var(--ws-font-size-18);
+    }
+  }
+
+  /* and one too narrow for the compact display size, on the narrowest phones, the h1's */
+  @container (width < 18.5rem) {
+    h1 {
+      font: var(--ws-text-h1-compact);
+      letter-spacing: var(--ws-text-h1-compact-letter-spacing);
     }
   }
 </style>

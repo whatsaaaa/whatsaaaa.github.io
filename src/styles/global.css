@@ -34,6 +34,19 @@ body {
 }
 
 /*
+ * The path is the part of the status line that gives way to the others, down to nothing when
+ * there is no room. Its padding is inside what it cuts off, so the padding goes with it.
+ */
+.ws-status-line__file {
+  padding-inline: 0;
+  overflow: hidden;
+}
+
+.ws-status-line__file > span {
+  padding-inline: var(--ws-space-14);
+}
+
+/*
  * A prompt centers its chevron on its whole height, which sits between the lines of a
  * prompt that wraps. It is kept on the first line instead, where it is just as centered.
  */
@@ -138,7 +151,7 @@ body {
   /* the status line keeps the path readable next to the keys switch and the theme */
   :is(
     .ws-status-line__mode,
-    .ws-status-line__file,
+    .ws-status-line__file > span,
     .ws-status-line__item,
     .ws-status-line__switch
   ) {

@@ -34,6 +34,7 @@ const socialCard = new URL('/social-card.png', Astro.site);
 // the color of the browser's own bars, from the tokens
 const background = (theme: 'dark' | 'light') =>
   resolver.apply({ theme })['color.bg'].$value.hex;
+const backgrounds = { dark: background('dark'), light: background('light') };
 ---
 
 <!doctype html>
@@ -45,6 +46,36 @@ const background = (theme: 'dark' | 'light') =>
     {/* a remembered theme and keys apply before the first paint, so before the stylesheet */}
     <script is:inline set:html={themeInitScript} />
     <script is:inline set:html={keysInitScript} />
+    {/* The browser's own bars take the background of the theme the page shows. While it
+         follows the system, the media of each tag picks the theme, and one chosen by hand
+         sets both. */}
+    <meta
+      name="theme-color"
+      content={backgrounds.dark}
+      media="not (prefers-color-scheme: light)"
+      data-theme-for="dark"
+    />
+    <meta
+      name="theme-color"
+      content={backgrounds.light}
+      media="(prefers-color-scheme: light)"
+      data-theme-for="light"
+    />
+    <script is:inline define:vars={{ backgrounds }}>
+      const root = document.documentElement;
+      const tags = document.querySelectorAll('meta[name="theme-color"]');
+      const color = () => {
+        for (const tag of tags) {
+          tag.content =
+            backgrounds[root.dataset.theme] ??
+            backgrounds[tag.dataset.themeFor];
+        }
+      };
+      color();
+      new MutationObserver(color).observe(root, {
+        attributeFilter: ['data-theme'],
+      });
+    </script>
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     {noindex && <meta name="robots" content="noindex" />}
@@ -53,16 +84,6 @@ const background = (theme: 'dark' | 'light') =>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta
-      name="theme-color"
-      content={background('dark')}
-      media="not (prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content={background('light')}
-      media="(prefers-color-scheme: light)"
-    />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={pageTitle} />
@@ -102,19 +123,32 @@ const background = (theme: 'dark' | 'light') =>
 
       defineGhost();
       enableShortcuts();
+      // The theme's name is a button per theme, and only the one of the theme shows.
+      // When the focused one hides, the focus goes to the one that shows now.
+      const names = [
+        ...document.querySelectorAll<HTMLElement>('[data-theme-name]'),
+      ];
+      const keepFocus = (focused: Element | null) => {
+        if (
+          focused?.matches('[data-theme-name]') &&
+          focused.getClientRects().length === 0
+        ) {
+          names.find((name) => name.getClientRects().length > 0)?.focus();
+        }
+      };
       for (const control of document.querySelectorAll<HTMLElement>(
         '[data-toggle-theme]',
       )) {
         control.addEventListener('click', () => {
-          const focused = document.activeElement === control;
+          const focused = document.activeElement;
           toggleTheme();
-          // The theme's name is a button per theme, and only the one of the theme shows.
-          // When the focused one hides, the focus goes to the one that shows now.
-          if (focused && control.getClientRects().length === 0) {
-            [...document.querySelectorAll<HTMLElement>('[data-theme-name]')]
-              .find((name) => name.getClientRects().length > 0)
-              ?.focus();
-          }
+          keepFocus(focused);
+        });
+      }
+      // the browser lets go of the focus of one that hides, as when the system switches
+      for (const name of names) {
+        name.addEventListener('focusout', (event) => {
+          if (event.relatedTarget === null) keepFocus(name);
         });
       }
     </script>
