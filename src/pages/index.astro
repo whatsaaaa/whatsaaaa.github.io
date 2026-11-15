@@ -25,7 +25,7 @@ const stack = [
   <section class="pane" aria-labelledby="who">
     <p class="ws-prompt">whoami</p>
     <div class="who">
-      <Ghost px={6} />
+      <Ghost px={6} compactPx={4} />
       <div>
         <h1 id="who">
           {siteName}
@@ -94,8 +94,8 @@ const stack = [
 
   .role {
     margin-top: var(--ws-space-10);
-    font-size: var(--ws-font-size-20);
-    font-weight: var(--ws-font-weight-medium);
+    font: var(--ws-text-tagline);
+    letter-spacing: var(--ws-text-tagline-letter-spacing);
     text-wrap: balance;
   }
 
@@ -128,14 +128,9 @@ const stack = [
       letter-spacing: var(--ws-text-display-compact-letter-spacing);
     }
 
-    /* four screen pixels per sprite pixel instead of six */
-    .who :global(.ws-ghost__sprite) {
-      width: 2.5rem;
-      height: 3rem;
-    }
-
     .role {
-      font-size: var(--ws-font-size-18);
+      font: var(--ws-text-tagline-compact);
+      letter-spacing: var(--ws-text-tagline-compact-letter-spacing);
     }
   }
 

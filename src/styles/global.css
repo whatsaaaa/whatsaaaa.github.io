@@ -17,34 +17,6 @@ body {
   margin-inline: auto;
 }
 
-/*
- * The window and the status line clip what crosses their edges, and a tab and a key fill
- * their bar from edge to edge, so a focus ring outside them loses its top, or its top and
- * bottom. It is drawn inside them instead, as the design system does for the keys switch.
- * A key gets the room for it as padding, taken back from the gap between the keys.
- */
-.ws-tabs a:focus-visible,
-.ws-status-line__keys :is(a, button):focus-visible {
-  outline-offset: calc(-1 * var(--ws-border-width-medium));
-}
-
-.ws-status-line__keys :is(a, button) {
-  margin-inline: calc(-1 * var(--ws-space-8));
-  padding-inline: var(--ws-space-8);
-}
-
-/*
- * A prompt centers its chevron on its whole height, which sits between the lines of a
- * prompt that wraps. It is kept on the first line instead, where it is just as centered.
- */
-.ws-prompt {
-  align-items: flex-start;
-}
-
-.ws-prompt::before {
-  margin-top: calc((1lh - 0.875em) / 2);
-}
-
 .skip-link {
   position: absolute;
   top: var(--ws-space-8);
@@ -139,8 +111,8 @@ body {
   :is(
     .ws-status-line__mode,
     .ws-status-line__file,
-    .ws-status-line__item,
-    .ws-status-line__switch
+    .ws-status-line__switch,
+    .ws-status-line__theme
   ) {
     padding-inline: var(--ws-space-10);
   }
