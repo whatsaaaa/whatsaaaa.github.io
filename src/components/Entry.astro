@@ -49,16 +49,6 @@ const Heading = level === 2 ? 'h2' : 'h3';
     font: var(--ws-text-caption);
   }
 
-  /* A state takes its baseline from its dot, which sits half a pixel off the one of its
-     word. Its word gives it the baseline instead, and the dot stays centered. */
-  .meta :global(.ws-state) {
-    align-items: baseline;
-  }
-
-  .meta :global(.ws-state)::before {
-    align-self: center;
-  }
-
   .title {
     font: var(--ws-text-h4);
   }

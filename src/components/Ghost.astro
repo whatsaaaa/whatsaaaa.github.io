@@ -6,11 +6,18 @@ import { ghostMarkup } from '@whatsaaaa/design-system/ghost';
 interface Props {
   /** Size of one sprite pixel in CSS pixels. */
   px: number;
+  /** The size of one sprite pixel below 64rem, from 1 to 5, for a large ghost on a phone. */
+  compactPx?: 1 | 2 | 3 | 4 | 5;
   /** Fixes the side the speech bubble takes. */
   bubble?: 'above' | 'below';
 }
 
-const { px, bubble } = Astro.props;
+const { px, compactPx, bubble } = Astro.props;
 ---
 
-<ws-ghost px={px} bubble={bubble} set:html={ghostMarkup({ px })} />
+<ws-ghost
+  px={px}
+  compact-px={compactPx}
+  bubble={bubble}
+  set:html={ghostMarkup({ px })}
+/>

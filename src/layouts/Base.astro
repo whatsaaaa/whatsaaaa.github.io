@@ -1,7 +1,6 @@
 ---
 import { keysInitScript } from '@whatsaaaa/design-system/shortcuts';
 import { themeInitScript } from '@whatsaaaa/design-system/theme';
-import { resolver } from '@whatsaaaa/design-system/tokens';
 import StatusLine from '../components/StatusLine.astro';
 import TabBar from '../components/TabBar.astro';
 import { siteDescription, siteName, type Section } from '../lib/site';
@@ -31,10 +30,6 @@ const {
 const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialCard = new URL('/social-card.png', Astro.site);
-// the color of the browser's own bars, from the tokens
-const background = (theme: 'dark' | 'light') =>
-  resolver.apply({ theme })['color.bg'].$value.hex;
-const backgrounds = { dark: background('dark'), light: background('light') };
 ---
 
 <!doctype html>
@@ -43,39 +38,10 @@ const backgrounds = { dark: background('dark'), light: background('light') };
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
-    {/* a remembered theme and keys apply before the first paint, so before the stylesheet */}
+    {/* A remembered theme and keys apply before the first paint, so before the stylesheet.
+         The theme's script also gives the browser's own bars the theme's background. */}
     <script is:inline set:html={themeInitScript} />
     <script is:inline set:html={keysInitScript} />
-    {/* The browser's own bars take the background of the theme the page shows. While it
-         follows the system, the media of each tag picks the theme, and one chosen by hand
-         sets both. */}
-    <meta
-      name="theme-color"
-      content={backgrounds.dark}
-      media="not (prefers-color-scheme: light)"
-      data-theme-for="dark"
-    />
-    <meta
-      name="theme-color"
-      content={backgrounds.light}
-      media="(prefers-color-scheme: light)"
-      data-theme-for="light"
-    />
-    <script is:inline define:vars={{ backgrounds }}>
-      const root = document.documentElement;
-      const tags = document.querySelectorAll('meta[name="theme-color"]');
-      const color = () => {
-        for (const tag of tags) {
-          tag.content =
-            backgrounds[root.dataset.theme] ??
-            backgrounds[tag.dataset.themeFor];
-        }
-      };
-      color();
-      new MutationObserver(color).observe(root, {
-        attributeFilter: ['data-theme'],
-      });
-    </script>
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     {noindex && <meta name="robots" content="noindex" />}
@@ -123,27 +89,8 @@ const backgrounds = { dark: background('dark'), light: background('light') };
 
       defineGhost();
       enableShortcuts();
-      // The theme's name is a button per theme, and only the one of the theme shows.
-      // When the focused one hides, the focus goes to the one that shows now.
-      const names = [
-        ...document.querySelectorAll<HTMLElement>('[data-theme-name]'),
-      ];
-      const keepFocus = (focused: Element | null) => {
-        if (
-          focused?.matches('[data-theme-name]') &&
-          focused.getClientRects().length === 0
-        ) {
-          names.find((name) => name.getClientRects().length > 0)?.focus();
-        }
-      };
-      for (const control of document.querySelectorAll<HTMLElement>(
-        '[data-toggle-theme]',
-      )) {
-        control.addEventListener('click', () => {
-          const focused = document.activeElement;
-          toggleTheme();
-          keepFocus(focused);
-        });
+      for (const control of document.querySelectorAll('[data-toggle-theme]')) {
+        control.addEventListener('click', () => toggleTheme());
       }
     </script>
   </body>
