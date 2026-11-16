@@ -88,7 +88,7 @@ body {
     display: block;
   }
 
-  /* the content starts where the brand of the tab bar does */
+  /* the gutter of a phone: the content starts where the brand of the tab bar does */
   .pane {
     padding: var(--ws-space-24) var(--ws-space-16);
     overflow: visible;
@@ -105,15 +105,5 @@ body {
 
   .column {
     padding: var(--ws-space-24) var(--ws-space-16) var(--ws-space-48);
-  }
-
-  /* the status line keeps the path readable next to the keys switch and the theme */
-  :is(
-    .ws-status-line__mode,
-    .ws-status-line__file,
-    .ws-status-line__switch,
-    .ws-status-line__theme
-  ) {
-    padding-inline: var(--ws-space-10);
   }
 }
