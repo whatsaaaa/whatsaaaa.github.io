@@ -1,6 +1,7 @@
 ---
 import { keysInitScript } from '@whatsaaaa/design-system/shortcuts';
 import { themeInitScript } from '@whatsaaaa/design-system/theme';
+import { themeColorMeta } from '@whatsaaaa/design-system/theme/meta';
 import StatusLine from '../components/StatusLine.astro';
 import TabBar from '../components/TabBar.astro';
 import { siteDescription, siteName, type Section } from '../lib/site';
@@ -38,8 +39,12 @@ const socialCard = new URL('/social-card.png', Astro.site);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
-    {/* A remembered theme and keys apply before the first paint, so before the stylesheet.
-         The theme's script also gives the browser's own bars the theme's background. */}
+    {/* The browser's own bars take the theme's background, without JavaScript too.
+         The theme's script keeps them at the theme shown. */}
+    {themeColorMeta.map((attrs) => (
+      <meta {...attrs} />
+    ))}
+    {/* A remembered theme and keys apply before the first paint, so before the stylesheet. */}
     <script is:inline set:html={themeInitScript} />
     <script is:inline set:html={keysInitScript} />
     <meta name="description" content={description} />
