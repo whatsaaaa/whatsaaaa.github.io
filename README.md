@@ -45,3 +45,7 @@ Other repositories publish their own GitHub Pages sites under this domain, such 
 ## Deployment
 
 Every push to `main` builds the site and deploys it to GitHub Pages through the [deploy workflow](.github/workflows/deploy.yml). It can also be run by hand from the Actions tab. Pull requests run the [CI workflow](.github/workflows/ci.yml): format check, lint, `astro check` and a build.
+
+## License
+
+[MIT](./LICENSE).
